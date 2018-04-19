@@ -1,0 +1,25 @@
+{
+  "name": "pr_mom",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node servidor.js",
+    "client": "node cliente.js"
+  },
+  "author": "Diego Maroto",
+  "license": "ISC",
+  "dependencies": {
+    "stompit": "^0.25.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DiegoMGar/MTIS_MOM.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DiegoMGar/MTIS_MOM/issues"
+  },
+  "homepage": "https://github.com/DiegoMGar/MTIS_MOM#readme",
+  "description": ""
+}
