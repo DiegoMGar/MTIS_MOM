@@ -1,9 +1,14 @@
-var stompit = require('./stompit-oficina-generic.js');
-
 var oficina = process.argv[2]
-if(!oficina){
-    console.log('Necesitas pasar por parámetro el nombre de la oficina.')
+var servicio = process.argv[3]
+var min = parseInt(process.argv[4])
+var max = parseInt(process.argv[5])
+if(!oficina || !servicio || !min || !max || min=='NaN' || max=='NaN'){
+    console.log('Necesitas pasar por parámetro el nombre de la oficina y el servicio, el min y el max')
     return 0
 }
+servicio = servicio.charAt(0).toUpperCase()+servicio.slice(1)
 
-stompit.connect('/topic/'+oficina+'.lecturasIluminacion','/topic/'+oficina+'.lecturasIluminacion')
+var stompit = require('./src/stompit-oficina-generic.js');
+
+stompit.setValues(min, max)
+stompit.connect('/topic/'+oficina+'.lecturas'+servicio,'/topic/'+oficina+'.actuador'+servicio)

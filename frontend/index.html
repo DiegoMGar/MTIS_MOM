@@ -4,13 +4,174 @@
 <head>
     <meta charset="UTF-8">
     <title>Front Consola</title>
+
+    <!-- JQUERY-->
+    <script src="jquery/jquery.js"></script>
+
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+    <!-- CUSTOM STYLES -->
+    <style>
+        .container {
+            text-align: center;
+        }
+
+        .border-righ {
+            border-right: 1px rgb(80, 80, 80) solid;
+            margin: auto;
+        }
+
+        .border-left {
+            border-left: 1px rgb(80, 80, 80) solid;
+            margin: auto;
+        }
+
+        #contenedorTopicsActivos {
+            text-align: left;
+            border-top: 1px rgb(80, 80, 80) solid;
+        }
+
+        .backgred {
+            background-color: firebrick;
+        }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <h1>MTIS Message Oriented Middleware</h1>
+        <div class="col-sm-12 col-md-6 border-righ">
+            <h2>Oficina 1</h2>
+            <div class="col-md-6 col-sm-12">
+                <div class="panel panel-default contenedorMOM">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Temperatura</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul id="listado_oficina1Temperatura">
 
-    <h1>My First Heading</h1>
-    <p>My first paragraph.</p>
+                        </ul>
+                        <form action="#" class="form-group">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="sendTempOfi1" placeholder="Temperatura">
+                            </div>
+                            <button type="button" class="btn btn-primary">SetValue</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
+            <div class="col-md-6 col-sm-12">
+                <div class="panel panel-default contenedorMOM">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Iluminación</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul id="listado_oficina1Iluminacion">
+
+                        </ul>
+                        <form action="#" class="form-group">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="sendIlumOfi1" placeholder="Iluminación">
+                            </div>
+                            <button type="button" class="btn btn-primary">SetValue</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 border-left">
+            <h2>Oficina 2</h2>
+            <div class="col-md-6 col-sm-12">
+                <div class="panel panel-default contenedorMOM">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Temperatura</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul id="listado_oficina2Temperatura">
+
+                        </ul>
+                        <form action="#" class="form-group">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="sendTempOfi2" placeholder="Temperatura">
+                            </div>
+                            <button type="button" class="btn btn-primary">SetValue</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12">
+                <div class="panel panel-default contenedorMOM">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Iluminación</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul id="listado_oficina2Iluminacion">
+
+                        </ul>
+                        <form action="#" class="form-group">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="sendIlumOfi2" placeholder="Iluminación">
+                            </div>
+                            <button type="button" class="btn btn-primary">SetValue</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12" id="contenedorTopicsActivos">
+            <h3>Topics activos:</h3>
+            <ul id="topicsActivos">
+                <!-- JS FETCH TOPICS FEDEA ESTE NODO -->
+            </ul>
+        </div>
+    </div>
+    <script>
+        //FUNCIONES DECLARADAS PARA SU POSTERIOR USO
+        $("form").submit(function(e){e.preventDefault()})
+        $("input").val("")
+        function printTopics(topics, listsLength) {
+            for (var i in topics) {
+                for (var j = 0; j < listsLength; j++)
+                    $("#listado_" + topics[i]).append("<li id='" + topics[i] + "_" + j.toString() + "'></li>")
+            }
+        }
+    </script>
+    <script>
+        var topics = new Array()
+        var listsLength = 20
+        fetch("http://localhost:3000/topics")
+            .then(function (resp) {
+                return resp.json()
+            }).then(function (resp) {
+                for (var i of resp) {
+                    $("#topicsActivos").append("<li>" + i + "</li>")
+                    topics.push(i)
+                }
+                printTopics(topics, listsLength)
+            }).catch(function (err) {
+                alert("Error fetch topics: " + err.message)
+            })
+        setInterval(function () {
+            // SINCRONIZACIÓN Y FETCH DE MENSAJES DE CADA LISTADO
+            for (var i of topics) {
+                fetch("http://localhost:3000/messages/" + i)
+                    .then(function (resp) {
+                        return resp.json()
+                    }).then(function (resp) {
+                        var listado = resp.list.reverse()
+                        for (var j in listado) {
+                            $("#" + resp.topic + "_" + j.toString()).html(listado[j])
+                        }
+                    }).catch(function (err) {
+                        alert("Error fetch topic [" + i + "]: " + err.message)
+                    })
+            }
+        }, 3000)
+    </script>
 </body>
 
 </html>
