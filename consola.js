@@ -64,19 +64,20 @@ function suscribe(client, nombre, topic) {
     client.subscribe(topic, function (err, new_message) {
         if (err) { console.log("subscribe error " + err.message); return; }
         new_message.readString("utf-8", function (err, body) {
-            body = parseInt(body)
+            var valor = parseInt(body)
             if (err) { console.log("subscribe error " + err.message); return; }
-            console.log("Msg recibido [" + topic + "]: " + body)
-            msgQueues[nombre].push(body)
+            console.log("Msg recibido [" + topic + "]: " + valor)
+            msgQueues[nombre].push(valor)
             if (msgQueues[nombre].length > listsLength)
                 msgQueues[nombre] = msgQueues[nombre].slice(1)
-            controladorValores(client, nombre, body)
+            controladorValores(client, nombre, valor)
         })
     })
     setInterval(function () {
         if (control.length > 0) {
             var order = control.pop()
-            sendMsg(client, order.topic, order.value)
+            control = new Array()
+            sendMsg(client, publicaciones[order.topic], order.value)
         }
     }, 2000)
 }
@@ -103,7 +104,7 @@ app.get("/topics", function (req, resp) {
 
 app.get("/messages/:msg", function (req, resp) {
     var msg = req.params.msg
-    console.log("Requested message from: " + msg)
+    //console.log("Requested message from: " + msg)
     if (Array.isArray(msgQueues[msg])) {
         resp.send(JSON.stringify({ "topic": msg, "list": msgQueues[msg] }))
     } else {
@@ -115,7 +116,7 @@ app.get("/messages/:msg", function (req, resp) {
 app.post("/forcevalue", function (req, resp) {
     var body = req.body
     if (!body.value || !body.topic) {
-        resp.status(500)
+        resp.status(400)
         resp.end()
     } else {
         console.log("Force value [" + body.topic + "]: " + body.value)

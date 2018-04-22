@@ -57,7 +57,7 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" id="sendTempOfi1" placeholder="Temperatura">
                             </div>
-                            <button type="button" class="btn btn-primary">SetValue</button>
+                            <button type="button" class="btn btn-primary" id="sendTempOfi1_btn">SetValue</button>
                         </form>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" id="sendIlumOfi1" placeholder="Iluminación">
                             </div>
-                            <button type="button" class="btn btn-primary">SetValue</button>
+                            <button type="button" class="btn btn-primary" id="sendIlumOfi1_btn">SetValue</button>
                         </form>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" id="sendTempOfi2" placeholder="Temperatura">
                             </div>
-                            <button type="button" class="btn btn-primary">SetValue</button>
+                            <button type="button" class="btn btn-primary" id="sendTempOfi2_btn">SetValue</button>
                         </form>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" id="sendIlumOfi2" placeholder="Iluminación">
                             </div>
-                            <button type="button" class="btn btn-primary">SetValue</button>
+                            <button type="button" class="btn btn-primary" id="sendIlumOfi2_btn">SetValue</button>
                         </form>
                     </div>
                 </div>
@@ -139,6 +139,58 @@
                     $("#listado_" + topics[i]).append("<li id='" + topics[i] + "_" + j.toString() + "'></li>")
             }
         }
+        $("#sendIlumOfi1_btn").click(function () {
+            fetch("http://localhost:3000/forcevalue",
+                {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    body: JSON.stringify({ "topic": "oficina1Iluminacion", "value": $("#sendIlumOfi1").val() })
+                })
+                .then(function (resp) { alert("OK: " + resp.status) })
+                .catch(function (err) { alert("Error fetch SendIlumOfi1: " + err.message) })
+        })
+        $("#sendIlumOfi2_btn").click(function () {
+            fetch("http://localhost:3000/forcevalue",
+                {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    body: JSON.stringify({ "topic": "oficina2Iluminacion", "value": $("#sendIlumOfi2").val() })
+                })
+                .then(function (resp) { alert("OK: " + resp.status) })
+                .catch(function (err) { alert("Error fetch SendIlumOfi2: " + err.message) })
+        })
+        $("#sendTempOfi1_btn").click(function () {
+            fetch("http://localhost:3000/forcevalue",
+                {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    body: JSON.stringify({ "topic": "oficina1Temperatura", "value": $("#sendTempOfi1").val() })
+                })
+                .then(function (resp) { alert("OK: " + resp.status) })
+                .catch(function (err) { alert("Error fetch sendTempOfi1: " + err.message) })
+        })
+        $("#sendTempOfi2_btn").click(function () {
+            fetch("http://localhost:3000/forcevalue",
+                {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    method: "POST",
+                    body: JSON.stringify({ "topic": "oficina2Temperatura", "value": $("#sendTempOfi2").val() })
+                })
+                .then(function (resp) { alert("OK: " + resp.status) })
+                .catch(function (err) { alert("Error fetch sendTempOfi2: " + err.message) })
+        })
     </script>
     <script>
         var topics = new Array()
