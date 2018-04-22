@@ -105,7 +105,7 @@ app.get("/messages/:msg", function (req, resp) {
     var msg = req.params.msg
     console.log("Requested message from: " + msg)
     if (Array.isArray(msgQueues[msg])) {
-        resp.send(JSON.stringify({"topic":msg, "list":msgQueues[msg]}))
+        resp.send(JSON.stringify({ "topic": msg, "list": msgQueues[msg] }))
     } else {
         resp.status(404)
         resp.end()
