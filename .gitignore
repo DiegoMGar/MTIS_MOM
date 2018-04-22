@@ -1,2 +1,5 @@
 node_modules/
-
+diegomaroto_activemq/
+*.zip
+*.pdf
+*.odt
