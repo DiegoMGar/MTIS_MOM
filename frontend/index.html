@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css">
     <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 
+    <!-- CHART -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <!-- CUSTOM STYLES -->
     <style>
         .container {
@@ -129,6 +131,11 @@
             </ul>
         </div>
     </div>
+    <div class="container">
+        <h2>Comparación datos</h2>
+        <canvas id="line-chart"></canvas>
+        <canvas id="line-chart2"></canvas>
+    </div>
     <script>
         //FUNCIONES DECLARADAS PARA SU POSTERIOR USO
         $("form").submit(function (e) { e.preventDefault() })
@@ -195,6 +202,12 @@
     <script>
         var topics = new Array()
         var listsLength = 20
+        var valoresAgrupados = {
+            oficina1Iluminacion: [],
+            oficina2Iluminacion: [],
+            oficina1Temperatura: [],
+            oficina2Temperatura: [],
+        }
         fetch("http://localhost:3000/topics")
             .then(function (resp) {
                 return resp.json()
@@ -214,6 +227,7 @@
                     .then(function (resp) {
                         return resp.json()
                     }).then(function (resp) {
+                        valoresAgrupados[resp.topic] = resp.list
                         var listado = resp.list.reverse()
                         for (var j in listado) {
                             $("#" + resp.topic + "_" + j.toString()).html(listado[j])
@@ -223,6 +237,112 @@
                     })
             }
         }, 3000)
+    </script>
+    <script>
+        setInterval(function () {
+            new Chart(document.getElementById("line-chart"), {
+                type: 'line',
+                data: {
+                    labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    datasets: [{
+                        data: valoresAgrupados.oficina1Iluminacion,
+                        label: "Iluminación Oficina 1",
+                        borderColor: "#3e95cd",
+                        cubicInterpolationMode: 'monotone',
+                        fill: false
+                    },
+                    {
+                        data: valoresAgrupados.oficina2Iluminacion,
+                        label: "Iluminación Oficina 2",
+                        borderColor: "#8e5ea2",
+                        cubicInterpolationMode: 'monotone',
+                        fill: false
+                    }
+                    ]
+                },
+                options: {
+                    animation: false,
+                    responsive: true,
+                    title: {
+                        display: true,
+                    },
+                    tooltips: {
+                        mode: 'index'
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Value'
+                            },
+                            ticks: {
+                                suggestedMin: -10,
+                                suggestedMax: 1100,
+                            }
+                        }]
+
+                    }
+                }
+            })
+            new Chart(document.getElementById("line-chart2"), {
+                type: 'line',
+                data: {
+                    labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    datasets: [{
+                        data: valoresAgrupados.oficina1Temperatura,
+                        label: "Temperatura Oficina 1",
+                        borderColor: "#3e95cd",
+                        cubicInterpolationMode: 'monotone',
+                        fill: false
+                    },
+                    {
+                        data: valoresAgrupados.oficina2Temperatura,
+                        label: "Temperatura Oficina 2",
+                        borderColor: "#8e5ea2",
+                        cubicInterpolationMode: 'monotone',
+                        fill: false
+                    }
+                    ]
+                },
+                options: {
+                    animation: false,
+                    responsive: true,
+                    title: {
+                        display: true,
+                    },
+                    tooltips: {
+                        mode: 'index'
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Value'
+                            },
+                            ticks: {
+                                suggestedMin: -5,
+                                suggestedMax: 55,
+                            }
+                        }]
+
+                    }
+                }
+            })
+        }, 5000)
     </script>
 </body>
 
