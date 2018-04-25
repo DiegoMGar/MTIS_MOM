@@ -38,6 +38,14 @@
         .backgred {
             background-color: firebrick;
         }
+        .h2_oficina1{
+            color:#004C99;
+            font-weight: bold;
+        }
+        .h2_oficina2{
+            color:#990000;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -45,7 +53,7 @@
     <div class="container">
         <h1>MTIS Message Oriented Middleware</h1>
         <div class="col-sm-12 col-md-6 border-righ">
-            <h2>Oficina 1</h2>
+            <h2 class="h2_oficina1">Oficina 1</h2>
             <div class="col-md-6 col-sm-12">
                 <div class="panel panel-default contenedorMOM">
                     <div class="panel-heading">
@@ -85,7 +93,7 @@
             </div>
         </div>
         <div class="col-sm-12 col-md-6 border-left">
-            <h2>Oficina 2</h2>
+            <h2 class="h2_oficina2">Oficina 2</h2>
             <div class="col-md-6 col-sm-12">
                 <div class="panel panel-default contenedorMOM">
                     <div class="panel-heading">
@@ -156,7 +164,7 @@
                     method: "POST",
                     body: JSON.stringify({ "topic": "oficina1Iluminacion", "value": $("#sendIlumOfi1").val() })
                 })
-                .then(function (resp) { alert("OK: " + resp.status) })
+                .then(function (resp) { alert("OK") })
                 .catch(function (err) { alert("Error fetch SendIlumOfi1: " + err.message) })
         })
         $("#sendIlumOfi2_btn").click(function () {
@@ -169,7 +177,7 @@
                     method: "POST",
                     body: JSON.stringify({ "topic": "oficina2Iluminacion", "value": $("#sendIlumOfi2").val() })
                 })
-                .then(function (resp) { alert("OK: " + resp.status) })
+                .then(function (resp) { alert("OK") })
                 .catch(function (err) { alert("Error fetch SendIlumOfi2: " + err.message) })
         })
         $("#sendTempOfi1_btn").click(function () {
@@ -182,7 +190,7 @@
                     method: "POST",
                     body: JSON.stringify({ "topic": "oficina1Temperatura", "value": $("#sendTempOfi1").val() })
                 })
-                .then(function (resp) { alert("OK: " + resp.status) })
+                .then(function (resp) { alert("OK") })
                 .catch(function (err) { alert("Error fetch sendTempOfi1: " + err.message) })
         })
         $("#sendTempOfi2_btn").click(function () {
@@ -195,51 +203,10 @@
                     method: "POST",
                     body: JSON.stringify({ "topic": "oficina2Temperatura", "value": $("#sendTempOfi2").val() })
                 })
-                .then(function (resp) { alert("OK: " + resp.status) })
+                .then(function (resp) { alert("OK") })
                 .catch(function (err) { alert("Error fetch sendTempOfi2: " + err.message) })
         })
-    </script>
-    <script>
-        var topics = new Array()
-        var listsLength = 20
-        var valoresAgrupados = {
-            oficina1Iluminacion: [],
-            oficina2Iluminacion: [],
-            oficina1Temperatura: [],
-            oficina2Temperatura: [],
-        }
-        fetch("http://localhost:3000/topics")
-            .then(function (resp) {
-                return resp.json()
-            }).then(function (resp) {
-                for (var i of resp) {
-                    $("#topicsActivos").append("<li>" + i + "</li>")
-                    topics.push(i)
-                }
-                printTopics(topics, listsLength)
-            }).catch(function (err) {
-                alert("Error fetch topics: " + err.message)
-            })
-        setInterval(function () {
-            // SINCRONIZACIÓN Y FETCH DE MENSAJES DE CADA LISTADO
-            for (var i of topics) {
-                fetch("http://localhost:3000/messages/" + i)
-                    .then(function (resp) {
-                        return resp.json()
-                    }).then(function (resp) {
-                        valoresAgrupados[resp.topic] = resp.list
-                        var listado = resp.list.reverse()
-                        for (var j in listado) {
-                            $("#" + resp.topic + "_" + j.toString()).html(listado[j])
-                        }
-                    }).catch(function (err) {
-                        alert("Error fetch topic [" + i + "]: " + err.message)
-                    })
-            }
-        }, 3000)
-    </script>
-    <script>
-        setInterval(function () {
+        function charts(){
             new Chart(document.getElementById("line-chart"), {
                 type: 'line',
                 data: {
@@ -247,14 +214,14 @@
                     datasets: [{
                         data: valoresAgrupados.oficina1Iluminacion,
                         label: "Iluminación Oficina 1",
-                        borderColor: "#3e95cd",
+                        borderColor: "#004C99",
                         cubicInterpolationMode: 'monotone',
                         fill: false
                     },
                     {
                         data: valoresAgrupados.oficina2Iluminacion,
                         label: "Iluminación Oficina 2",
-                        borderColor: "#8e5ea2",
+                        borderColor: "#990000",
                         cubicInterpolationMode: 'monotone',
                         fill: false
                     }
@@ -298,14 +265,14 @@
                     datasets: [{
                         data: valoresAgrupados.oficina1Temperatura,
                         label: "Temperatura Oficina 1",
-                        borderColor: "#3e95cd",
+                        borderColor: "#004C99",
                         cubicInterpolationMode: 'monotone',
                         fill: false
                     },
                     {
                         data: valoresAgrupados.oficina2Temperatura,
                         label: "Temperatura Oficina 2",
-                        borderColor: "#8e5ea2",
+                        borderColor: "#990000",
                         cubicInterpolationMode: 'monotone',
                         fill: false
                     }
@@ -342,7 +309,47 @@
                     }
                 }
             })
-        }, 5000)
+        }
+    </script>
+    <script>
+        var topics = new Array()
+        var listsLength = 20
+        var valoresAgrupados = {
+            oficina1Iluminacion: [],
+            oficina2Iluminacion: [],
+            oficina1Temperatura: [],
+            oficina2Temperatura: [],
+        }
+        fetch("http://localhost:3000/topics")
+            .then(function (resp) {
+                return resp.json()
+            }).then(function (resp) {
+                for (var i of resp) {
+                    $("#topicsActivos").append("<li>" + i + "</li>")
+                    topics.push(i)
+                }
+                printTopics(topics, listsLength)
+            }).catch(function (err) {
+                alert("Error fetch topics: " + err.message)
+            })
+        setInterval(function () {
+            // SINCRONIZACIÓN Y FETCH DE MENSAJES DE CADA LISTADO
+            for (var i of topics) {
+                fetch("http://localhost:3000/messages/" + i)
+                    .then(function (resp) {
+                        return resp.json()
+                    }).then(function (resp) {
+                        var listado = resp.list.reverse()
+                        valoresAgrupados[resp.topic] = resp.list
+                        for (var j in listado) {
+                            $("#" + resp.topic + "_" + j.toString()).html(listado[j])
+                        }
+                    }).catch(function (err) {
+                        alert("Error fetch topic [" + i + "]: " + err.message)
+                    })
+            }
+            setTimeout(charts(),2000)
+        }, 3000)
     </script>
 </body>
 
